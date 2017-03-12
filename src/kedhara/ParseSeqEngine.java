@@ -1,8 +1,5 @@
 package kedhara;
 
-
-
-
 import java.io.*;
 import java.util.*;
 
@@ -98,7 +95,7 @@ public class ParseSeqEngine {
                 }
             }
         }
-        //printMaps();
+       
     }
 
     private ArrayList<CompilationUnit> getCuArray(String inPath)
@@ -129,22 +126,5 @@ public class ParseSeqEngine {
 
     }
 
-    @SuppressWarnings("unused")
-    private void printMaps() {
-        System.out.println("mapMethodCalls:");
-        Set<String> keys = mapMethodCalls.keySet(); // get all keys
-        for (String i : keys) {
-            System.out.println(i + "->" + mapMethodCalls.get(i));
-        }
-        System.out.println("---");
-        keys = null;
-
-        System.out.println("mapMethodClass:");
-        keys = mapMethodClass.keySet(); // get all keys
-        for (String i : keys) {
-            System.out.println(i + "->" + mapMethodClass.get(i));
-        }
-        System.out.println("---");
-    }
-
+   
 }
