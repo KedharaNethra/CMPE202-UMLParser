@@ -12,7 +12,7 @@ import com.github.javaparser.ast.stmt.*;
 import net.sourceforge.plantuml.SourceStringReader;
 
 public class ParseSeqEngine {
-    String pumlCode;
+    String yumlCode;
     final String inPath;
     final String outPath;
     final String inFuncName;
@@ -30,34 +30,34 @@ public class ParseSeqEngine {
         this.inFuncName = inFuncName;
         mapMethodClass = new HashMap<String, String>();
         mapMethodCalls = new HashMap<String, ArrayList<MethodCallExpr>>();
-        pumlCode = "@startuml\n";
+        yumlCode = "@startuml\n";
     }
 
     public void start() throws Exception {
         cuArray = getCuArray(inPath);
         buildMaps();
-        pumlCode += "actor user #black\n";
-        pumlCode += "user" + " -> " + inClassName + " : " + inFuncName + "\n";
-        pumlCode += "activate " + mapMethodClass.get(inFuncName) + "\n";
+        yumlCode += "actor user #black\n";
+        yumlCode += "user" + " -> " + inClassName + " : " + inFuncName + "\n";
+        yumlCode += "activate " + mapMethodClass.get(inFuncName) + "\n";
         parse(inFuncName);
-        pumlCode += "@enduml";
-        generateDiagram(pumlCode);
-        System.out.println("Plant UML Code:\n" + pumlCode);
+        yumlCode += "@enduml";
+        generateDiagram(yumlCode);
+        System.out.println("yUML Code:\n" + yumlCode);
     }
 
-    private void parse(String callerFunc) {
+    private void parse(String callingFunc) {
 
-        for (MethodCallExpr mce : mapMethodCalls.get(callerFunc)) {
-            String callerClass = mapMethodClass.get(callerFunc);
-            String calleeFunc = mce.getName();
-            String calleeClass = mapMethodClass.get(calleeFunc);
-            if (mapMethodClass.containsKey(calleeFunc)) {
-                pumlCode += callerClass + " -> " + calleeClass + " : "
+        for (MethodCallExpr mce : mapMethodCalls.get(callingFunc)) {
+            String callingClass = mapMethodClass.get(callingFunc);
+            String calledFunc = mce.getName();
+            String calledClass = mapMethodClass.get(calledFunc);
+            if (mapMethodClass.containsKey(calledFunc)) {
+                yumlCode += callingClass + " -> " + calledClass + " : "
                         + mce.toStringWithoutComments() + "\n";
-                pumlCode += "activate " + calleeClass + "\n";
-                parse(calleeFunc);
-                pumlCode += calleeClass + " -->> " + callerClass + "\n";
-                pumlCode += "deactivate " + calleeClass + "\n";
+                yumlCode += "activate " + calledClass + "\n";
+                parse(calledFunc);
+                yumlCode += calledClass + " -->> " + callingClass + "\n";
+                yumlCode += "deactivate " + calledClass + "\n";
             }
         }
     }
@@ -76,15 +76,12 @@ public class ParseSeqEngine {
                         ArrayList<MethodCallExpr> mcea = new ArrayList<MethodCallExpr>();
                         for (Object bs : md.getChildrenNodes()) {
                             if (bs instanceof BlockStmt) {
+                            	for (Object fs : md.getChildrenNodes()) {
+                            		if (fs instance of BlockStmt){
+                            	}
                                 for (Object es : ((Node) bs)
                                         .getChildrenNodes()) {
-                                    if (es instanceof ExpressionStmt) {
-                                        if (((ExpressionStmt) (es))
-                                                .getExpression() instanceof MethodCallExpr) {
-                                            mcea.add(
-                                                    (MethodCallExpr) (((ExpressionStmt) (es))
-                                                            .getExpression()));
-                                        }
+                                                                            }
                                     }
                                 }
                             }
