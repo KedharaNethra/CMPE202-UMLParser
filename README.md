@@ -14,6 +14,6 @@ A.)IDE-ECLIPSE Neon 2
 
 #UMLGenerator
 A.)yuml
-
+yuml generates the class diagram using the grammar returned from the java parser
 Yuml generates the UML diagram based on the input provided
 
