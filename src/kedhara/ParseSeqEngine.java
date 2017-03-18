@@ -46,6 +46,9 @@ public class ParseSeqEngine {
     }
 
     private void parse(String callingFunc) {
+        String className = "";
+        String ShrtName = "";
+
 
         for (MethodCallExpr mce : mapMethodCalls.get(callingFunc)) {
             String callingClass = mapMethodClass.get(callingFunc);
@@ -67,6 +70,16 @@ public class ParseSeqEngine {
             String className = "";
             List<TypeDeclaration> td = cu.getTypes();
             for (Node n : td) {
+            	//to get the classname
+            	ClassOrInterfaceDeclaration coi = (ClassOrInterfaceDeclaration) n;
+                if (coi.isInterface()) {
+                    className = "[" + "<<interface>>;";
+                } else {
+                    className = "[";
+                }
+                className += coi.getName();
+                ShrtName = coi.getName();
+
                 ClassOrInterfaceDeclaration coi = (ClassOrInterfaceDeclaration) n;
                 className = coi.getName();
                 for (BodyDeclaration bd : ((TypeDeclaration) coi)
