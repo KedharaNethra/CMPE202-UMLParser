@@ -17,3 +17,6 @@ A.)yuml
 yuml generates the class diagram using the grammar returned from the java parser
 Yuml generates the UML diagram based on the input provided
 
+#Establish HTTP Connection
+A.)Error codes
+[Link Text](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)

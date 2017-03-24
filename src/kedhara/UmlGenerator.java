@@ -1,9 +1,6 @@
 package kedhara;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
 
 public class UmlGenerator {
@@ -13,27 +10,27 @@ public class UmlGenerator {
             String webLink = "https://yuml.me/diagram/plain/class/" + grmr
                     + ".png";
             URL url = new URL(webLink);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Accept", "application/json");
 
-            if (conn.getResponseCode() != 200) {
+            if (con.getResponseCode() != 200) {
                 throw new RuntimeException(
-                        "Connection Failed : Error code is : " + conn.getResponseCode());
+                        "Connection Failed : Error code is : " + con.getResponseCode());
             }
-            OutputStream outputStream = new FileOutputStream(new File(oPath));
-            int read = 0;
+            OutputStream oStream = new FileOutputStream(new File(oPath));
+            int r = 0;
             byte[] bytes = new byte[1024];
 
-            while ((read = conn.getInputStream().read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
+            while ((r = con.getInputStream().read(bytes)) != -1) {
+                oStream.write(bytes, 0, r);
             }
-            outputStream.close();
-            conn.disconnect();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            oStream.close();
+            con.disconnect();
+        } catch (MalformedURLException uexp) {
+            uexp.printStackTrace();
+        } catch (IOException uexp) {
+            uexp.printStackTrace();
         }
         return null;
     }
