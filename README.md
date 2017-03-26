@@ -14,8 +14,10 @@ A.)IDE-ECLIPSE Neon 2
 
 #UMLGenerator
 A.)yuml
+http://yuml.me/
 yuml generates the class diagram using the grammar returned from the java parser
 Yuml generates the UML diagram based on the input provided
+GET query : https://yuml.me/diagram/plain/class/
 
 #Establish HTTP Connection
 A.)Error codes-Referred links
