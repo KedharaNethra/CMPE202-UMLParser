@@ -66,14 +66,7 @@ public class StartToParse {
 		//@Getting filenames of all files in a folder
 	 File folder = new File(srcFdr);
 	 ArrayList<CompilationUnit> compUnit = new ArrayList<CompilationUnit>();
-	 //File[] listOfFiles = folder.listFiles();
-
-	  //  for (int i = 0; i < listOfFiles.length; i++) {
-	   //   if (listOfFiles[i].isFile()) {
-	    //    System.out.println("File " + listOfFiles[i].getName());
-	    //  } else if (listOfFiles[i].isDirectory()) {
-	    //    System.out.println("Directory " + listOfFiles[i].getName());@@//
-	 
+		 
 	 //@@For loop for Arrays- Variable file holds the current value from the folder array
 	 for (final File jf : folder.listFiles()) {
 		 if (jf.isFile() && jf.getName().endsWith(".java")) {
