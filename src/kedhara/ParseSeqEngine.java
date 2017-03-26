@@ -126,7 +126,16 @@ public class ParseSeqEngine {
         }
         return cuArray;
     }
-
+    @SuppressWarnings
+    private void printMaps() {
+        System.out.println("Method calls to Map");
+        //To get all Keys
+        Set<String> k = mapMethodCalls.keySet(); 
+            System.out.println(i + "->" + mapMethodCalls.get(i));
+        }
+        System.out.println("method calls passed");
+        k = null;
+        }
     private String generateDiagram(String source) throws IOException {
 
         OutputStream png = new FileOutputStream(outPath);
