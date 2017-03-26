@@ -64,6 +64,16 @@ public class ParseSeqEngine {
             }
         }
     }
+    private String SymScope(String attribute) {
+        switch (attribute) {
+        case "private":
+            return "-";
+        case "public":
+            return "+";
+        default:
+            return "";
+        }
+    }
 
     private void buildMaps() {
         for (CompilationUnit cu : cuArray) {
