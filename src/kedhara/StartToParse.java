@@ -29,6 +29,10 @@ public class StartToParse {
 	srcyuml="";
 	}
 	
+	private String yumlCodeSep(String code) {
+        String[] srcCode = code.split(",");
+	}
+	
 	//@Method Map Parse - To get keys and to add the connections
 	private String mapParse(){
 		String output = "";
