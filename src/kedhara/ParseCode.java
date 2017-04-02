@@ -11,7 +11,7 @@ import com.github.javaparser.ast.stmt.*;
 
 import net.sourceforge.plantuml.SourceStringReader;
 
-public class ParseSeqEngine {
+public class ParseCode {
     String yumlCode;
     final String inPath;
     final String outPath;
@@ -22,7 +22,7 @@ public class ParseSeqEngine {
     ArrayList<CompilationUnit> cuArray;
     HashMap<String, ArrayList<MethodCallExpr>> mapMethodCalls;
 
-    ParseSeqEngine(String inPath, String inClassName, String inFuncName,
+    ParseCode(String inPath, String inClassName, String inFuncName,
             String outFile) {
         this.inPath = inPath;
         this.outPath = inPath + "\\" + outFile + ".png";
