@@ -5,6 +5,10 @@ import java.util.*;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.*;
+import net.sourceforge.plantuml.SourceStringReader;
 
 public class StartToParse {
 	final String srcFdr;
