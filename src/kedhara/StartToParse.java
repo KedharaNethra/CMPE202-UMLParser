@@ -55,7 +55,9 @@ public class StartToParse {
 		}
 		return output;
 	}
-	
+	// Parsing Methods
+    boolean nextParam = false;
+    for (BodyDeclaration bd : ((TypeDeclaration) node).getMembers()) {}
 	public void start() throws Exception {
 		compUnit = getCompUnit(srcFdr);
 //change needs		buildMap(compUnit);
