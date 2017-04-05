@@ -55,7 +55,7 @@ public class StartToParse {
 		}
 		return output;
 	}
-	// Parsing Methods
+	// To-ParseMthds
     boolean nextParam = false;
     for (BodyDeclaration bd : ((TypeDeclaration) node).getMembers()) {}
 	public void start() throws Exception {
