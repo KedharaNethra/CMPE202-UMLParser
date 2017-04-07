@@ -2,7 +2,6 @@ package kedhara;
 
 import java.io.*;
 import java.util.*;
-
 import com.github.javaparser.*;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
@@ -12,7 +11,7 @@ import com.github.javaparser.ast.stmt.*;
 import net.sourceforge.plantuml.SourceStringReader;
 
 public class ParseCode {
-    String yumlCode;
+    String pumlCode;
     final String inPath;
     final String outPath;
     final String inFuncName;
@@ -30,19 +29,19 @@ public class ParseCode {
         this.inFuncName = inFuncName;
         mapMethodClass = new HashMap<String, String>();
         mapMethodCalls = new HashMap<String, ArrayList<MethodCallExpr>>();
-        yumlCode = "@startuml\n";
+        pumlCode = "@startuml\n";
     }
 
     public void start() throws Exception {
         cuArray = getCuArray(inPath);
         buildMaps();
-        yumlCode += "actor user #black\n";
-        yumlCode += "user" + " -> " + inClassName + " : " + inFuncName + "\n";
-        yumlCode += "activate " + mapMethodClass.get(inFuncName) + "\n";
+        pumlCode += "actor user #black\n";
+        pumlCode += "user" + " -> " + inClassName + " : " + inFuncName + "\n";
+        pumlCode += "activate " + mapMethodClass.get(inFuncName) + "\n";
         parse(inFuncName);
-        yumlCode += "@enduml";
-        generateDiagram(yumlCode);
-        System.out.println("yUML Code:\n" + yumlCode);
+        pumlCode += "@enduml";
+        generateDiagram(pumlCode);
+        System.out.println("pUML Code:\n" + pumlCode);
     }
 
     private void parse(String callingFunc) {
@@ -55,12 +54,12 @@ public class ParseCode {
             String calledFunc = mce.getName();
             String calledClass = mapMethodClass.get(calledFunc);
             if (mapMethodClass.containsKey(calledFunc)) {
-                yumlCode += callingClass + " -> " + calledClass + " : "
+                pumlCode += callingClass + " -> " + calledClass + " : "
                         + mce.toStringWithoutComments() + "\n";
-                yumlCode += "activate " + calledClass + "\n";
+                pumlCode += "activate " + calledClass + "\n";
                 parse(calledFunc);
-                yumlCode += calledClass + " -->> " + callingClass + "\n";
-                yumlCode += "deactivate " + calledClass + "\n";
+                pumlCode += calledClass + " -->> " + callingClass + "\n";
+                pumlCode += "deactivate " + calledClass + "\n";
             }
         }
     }
