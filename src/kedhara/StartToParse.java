@@ -19,7 +19,7 @@ public class StartToParse {
 	HashMap<String, String> classconmap;
 	String srcyuml;
 	ArrayList<CompilationUnit> compUnit;
-	//@To get yumlcode//
+	//@To get srcyuml//
 	//constructor
 	
 	StartToParse(String srcFdr,String outPath){
@@ -31,10 +31,29 @@ public class StartToParse {
 	srcyuml="";
 	}
 	
-	private String yumlCodeSep(String code) {
+	private String srcyumlSep(String code) {
         String[] srcCode = code.split(",");
 	}
 	
+	public void start() throws Exception {
+        compUnit = getcompUnit(inPath);
+        buildMap(compUnit);
+        for (CompilationUnit cu : compUnit)
+            srcyuml += parser(cu);
+        srcyuml += parseAdditions();
+        srcyuml = srcyumlUniquer(srcyuml);
+        System.out.println("Unique Code: " + srcyuml);
+        GenerateDiagram.generatePNG(srcyuml, outPath);
+    }
+	
+	
+	private String srcyumlUniquer(String code) {
+        String[] codeLines = code.split(",");
+        String[] uniqueCodeLines = new LinkedHashSet<String>(
+                Arrays.asList(codeLines)).toArray(new String[0]);
+        String result = String.join(",", uniqueCodeLines);
+        return result;
+    }
 	//@Method Map Parse - To get keys and to add the connections
 	private String mapParse(){
 		String output = "";
@@ -66,7 +85,7 @@ public class StartToParse {
 		for (CompilationUnit comp : compUnit)
 //change needs				srcyuml += parser(comp);
 		srcyuml += mapParse();
-//change needs			srcyuml = yumlCodeUniquer(srcyuml);
+//change needs			srcyuml = srcyumlUniquer(srcyuml);
         System.out.println("Unique Code: " + srcyuml);
 // change needs	       GenerateDiagram.generatePNG(srcyuml, outFdr);
 	}
