@@ -36,15 +36,31 @@ public class StartToParse {
 	}
 	
 	public void start() throws Exception {
-        compUnit = getcompUnit(inPath);
+        compUnit = getcompUnit(srcFdr);
         buildMap(compUnit);
         for (CompilationUnit cu : compUnit)
-            srcyuml += parser(cu);
-        srcyuml += parseAdditions();
+            srcyuml += uparse(cu);
+        srcyuml += uparseAdd();
         srcyuml = srcyumlUniquer(srcyuml);
         System.out.println("Unique Code: " + srcyuml);
         GenerateDiagram.generatePNG(srcyuml, outPath);
     }
+	
+	//If map.put //for interface its true
+	//for class its false
+    private void buildMap(ArrayList<CompilationUnit> compUnit) {
+        for (CompilationUnit cu : compUnit) {
+            List<TypeDeclaration> clist = cu.getTypes();
+            for (Node nd : clist) {
+                ClassOrInterfaceDeclaration ci = (ClassOrInterfaceDeclaration) nd;
+                map.put(ci.getName(), ci.isInterface()); 
+                                                           
+            }
+        }
+    }
+
+	private String uparseAdd(){//Add Method Body}
+	private String uparse(CompilationUnit compUnit){}	
 	
 	
 	private String srcyumlUniquer(String code) {
