@@ -10,7 +10,7 @@ import com.github.javaparser.ast.stmt.*;
 
 import net.sourceforge.plantuml.SourceStringReader;
 
-public class ParseCode {
+public class ParseSeqCode {
     String pumlCode;
     final String inPath;
     final String outPath;
@@ -21,7 +21,7 @@ public class ParseCode {
     ArrayList<CompilationUnit> cuArray;
     HashMap<String, ArrayList<MethodCallExpr>> mapMethodCalls;
 
-    ParseCode(String inPath, String inClassName, String inFuncName,
+    ParseSeqCode(String inPath, String inClassName, String inFuncName,
             String outFile) {
         this.inPath = inPath;
         this.outPath = inPath + "\\" + outFile + ".png";
