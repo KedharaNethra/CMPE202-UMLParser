@@ -2,6 +2,7 @@ package kedhara;
 
 import java.io.*;
 import java.net.*;
+import java.io.IOException;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -16,7 +17,8 @@ public class UmlGenerator {
             String yumlLink = "cons://yuml.me/diagram/plain/class/" + grmr
                     + ".png";
             URL url = new URL(yumlLink);
-            HttpURLconnection ucon = (HttpURLconnection) url.openConnection();
+            HttpURLConnection ucon = (HttpURLConnection) url.openConnection();
+//           HttpURLconnection ucon = (HttpURLconnection) url.openConnection();
             ucon.setRequestMethod("GET");
             ucon.setRequestProperty("Accept", "application/json");
     		System.out.println(ucon.getResponseCode());
