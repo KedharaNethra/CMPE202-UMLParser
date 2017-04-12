@@ -61,8 +61,16 @@ public class StartToParse {
 
 	private String uparseAdd(){//Add Method Body}
 	private String uparse(CompilationUnit compUnit){}	
-	
-	
+	//Coverts AccessModifiers to symbols
+	 private String amToSym(String stringModifier) {
+		 { if(stringModifier.equals("private"))
+				return "-";
+			else if(stringModifier.equals("public"))
+				return "+";
+			else
+				return "";
+	        }
+	    }
 	private String srcyumlUniquer(String code) {
         String[] codeLines = code.split(",");
         String[] uniqueCodeLines = new LinkedHashSet<String>(
