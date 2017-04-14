@@ -59,8 +59,24 @@ public class StartToParse {
         }
     }
 
-	private String uparseAdd(){//Add Method Body}
-	private String uparse(CompilationUnit compUnit){}	
+	private String uparseAdd(){}
+	private String uparse(CompilationUnit compUnit){
+		String cName = "";
+		String cshName = "";
+		ArrayList<String> makeFieldPublic = new ArrayList<String>();
+        List<TypeDeclaration> ltd = compUnit.getTypes();
+        Node node = ltd.get(0);
+		// Gets cName
+        ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) node;
+        if (cid.isInterface()) {
+            cName = "[" + "<<interface>>;";
+        } else {
+            cName = "[";
+        }
+        cName += cid.getName();
+        cshName = cid.getName();	
+	}	
+	//}
 	//Coverts AccessModifiers to symbols
 	 private String amToSym(String stringModifier) {
 		 { if(stringModifier.equals("private"))
