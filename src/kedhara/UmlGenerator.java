@@ -27,14 +27,14 @@ public class UmlGenerator {
                 throw new RuntimeException(
                         "connection Failed : Error code is : " + ucon.getResponseCode());
             }
-            OutputStream oStream = new FileOutputStream(new File(oPath));
-            int r = 0;
+            FileOutputStream os = new FileOutputStream(new File(oPath));
+            int rd = 0;
             byte[] bytes = new byte[1024];
 
-            while ((r = ucon.getInputStream().read(bytes)) != -1) {
-                oStream.write(bytes, 0, r);
+            while ((rd = ucon.getInputStream().read(bytes)) != -1) {
+                os.write(bytes, 0, rd);
             }
-            oStream.close();
+            os.close();
             ucon.disconnect();
         } catch (MalformedURLException uexp) {
             uexp.printStackTrace();
