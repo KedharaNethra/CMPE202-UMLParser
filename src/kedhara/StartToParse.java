@@ -64,6 +64,8 @@ public class StartToParse {
 	private String uparse(CompilationUnit compUnit){
 		String appends = ",";
 		String cName = "";
+		String out = "";
+		String Variables = "";
 		String cshName = "";
 		ArrayList<String> makeFieldPublic = new ArrayList<String>();
         List<TypeDeclaration> ltd = compUnit.getTypes();
@@ -92,6 +94,19 @@ public class StartToParse {
                 appends += ",";
             }
         }
+        
+     // Combine className, methods and Variables
+        out += cName;
+        if (!Variables.isEmpty()) {
+            out += "|" + changeBrackets(Variables);
+        }
+        if (!methods.isEmpty()) {
+            out += "|" + changeBrackets(methods);
+        }
+        out += "]";
+        out += appends;
+        return out;
+    }
 	}	
 	//}
 	//Coverts AccessModifiers to symbols
@@ -108,8 +123,8 @@ public class StartToParse {
         String[] codeLines = code.split(",");
         String[] uniqueCodeLines = new LinkedHashSet<String>(
                 Arrays.asList(codeLines)).toArray(new String[0]);
-        String result = String.join(",", uniqueCodeLines);
-        return result;
+        String out = String.join(",", uniqueCodeLines);
+        return out;
     }
 	//@Method Map Parse - To get keys and to add the connections
 	private String mapParse(){
