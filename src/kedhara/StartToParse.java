@@ -3,6 +3,7 @@ package kedhara;
 import java.io.*;
 import java.util.*;
 import java.lang.*;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 
 import com.github.javaparser.JavaParser;
@@ -61,6 +62,7 @@ public class StartToParse {
 
 	private String uparseAdd(){}
 	private String uparse(CompilationUnit compUnit){
+		String appends = ",";
 		String cName = "";
 		String cshName = "";
 		ArrayList<String> makeFieldPublic = new ArrayList<String>();
@@ -74,7 +76,22 @@ public class StartToParse {
             cName = "[";
         }
         cName += cid.getName();
-        cshName = cid.getName();	
+        cshName = cid.getName();
+        
+     // Check extends, implements
+        if (cid.getExtends() != null) {
+            appends += "[" + cshName + "] " + "-^ " + cid.getExtends();
+            appends += ",";
+        }
+        if (cid.getImplements() != null) {
+            List<ClassOrInterfaceType> interfaceList = (List<ClassOrInterfaceType>) cid
+                    .getImplements();
+            for (ClassOrInterfaceType iface : interfaceList) {
+                appends += "[" + cshName + "] " + "-.-^ " + "["
+                        + "<<interface>>;" + iface + "]";
+                appends += ",";
+            }
+        }
 	}	
 	//}
 	//Coverts AccessModifiers to symbols
