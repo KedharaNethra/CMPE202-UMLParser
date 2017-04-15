@@ -1,9 +1,11 @@
-Test Case 1
+Test Case 1 - Done
 Validate the output for Test case1
 and fix the issues accordingly
-Test Case 2
+Test Case 2 - Refactoring has to be done
 Make necessary changes for Test case 2
 
+Fix bugs for Relationship issues 
+Modify and add scope of setters and getters
 
 Study on PlantUml for generating Sequence Diagrams.
 
