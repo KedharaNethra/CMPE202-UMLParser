@@ -162,6 +162,14 @@ public class StartToParse {
 // change needs	       GenerateDiagram.generatePNG(srcyuml, outFdr);
 	}
 	
+	// Change scope of getter, setters
+    if (fieldScope.equals("-")
+            && makeFieldPublic.contains(fieldName.toLowerCase())) {
+        fieldScope = "+";
+    }
+    String getDepen = "";
+    boolean getDepenMultiple = false;
+	
 	//@Method to get .java source files from input folder//
 	private ArrayList<CompilationUnit> getCompUnit(String srcFdr) 
 			throws Exception{
