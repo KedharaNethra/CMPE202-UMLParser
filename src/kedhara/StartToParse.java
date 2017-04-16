@@ -166,7 +166,24 @@ public class StartToParse {
                     String paramName = paramCast.getChildrenNodes()
                             .get(0).toString();
                     methods += paramName + " : " + paramClass;
-
+                    if (map.containsKey(paramClass)
+                            && !map.get(classShortName)) {
+                        additions += "[" + classShortName
+                                + "] uses -.->";
+                        if (map.get(paramClass))
+                            additions += "[<<interface>>;" + paramClass
+                                    + "]";
+                        else
+                            additions += "[" + paramClass + "]";
+                    }
+                    additions += ",";
+                }
+            }
+            methods += ")";
+            nextParam = true;
+        }
+    }
+}
 	
 	// Change scope of getter, setters
     if (fieldScope.equals("-")
