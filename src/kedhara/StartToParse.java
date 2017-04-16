@@ -151,16 +151,22 @@ public class StartToParse {
 	// To-ParseMthds
     boolean nextParam = false;
     for (BodyDeclaration bd : ((TypeDeclaration) node).getMembers()) {}
-	public void start() throws Exception {
-		compUnit = getCompUnit(srcFdr);
-//change needs		buildMap(compUnit);
-		for (CompilationUnit comp : compUnit)
-//change needs				srcyuml += parser(comp);
-		srcyuml += mapParse();
-//change needs			srcyuml = srcyumlUniquer(srcyuml);
-        System.out.println("Unique Code: " + srcyuml);
-// change needs	       GenerateDiagram.generatePNG(srcyuml, outFdr);
-	}
+    // Get the  Methods
+    if (bd instanceof ConstructorDeclaration) {
+        ConstructorDeclaration cd = ((ConstructorDeclaration) bd);
+        if (cd.getDeclarationAsString().startsWith("public")
+                && !coi.isInterface()) {
+            if (nextParam)
+                methods += ";";
+            methods += "+ " + cd.getName() + "(";
+            for (Object gcn : cd.getChildrenNodes()) {
+                if (gcn instanceof Parameter) {
+                    Parameter paramCast = (Parameter) gcn;
+                    String paramClass = paramCast.getType().toString();
+                    String paramName = paramCast.getChildrenNodes()
+                            .get(0).toString();
+                    methods += paramName + " : " + paramClass;
+
 	
 	// Change scope of getter, setters
     if (fieldScope.equals("-")
