@@ -129,6 +129,15 @@ public class StartToParse {
     }
 	}	
 	//}
+
+//This method changes the brackets
+    private String changeBrackets(String brckts) {
+    brckts = brckts.replace("[", "(");
+    brckts = brckts.replace("]", ")");
+    brckts = brckts.replace("<", "(");
+    brckts = brckts.replace(">", ")");
+    return brckts;
+    }
 	//Coverts AccessModifiers to symbols
 	 private String amToSym(String stringModifier) {
 		 { if(stringModifier.equals("private"))
