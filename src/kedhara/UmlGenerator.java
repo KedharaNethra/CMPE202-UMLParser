@@ -14,11 +14,10 @@ public class UmlGenerator {
 	public static Boolean generatePNG(String grmr, String oPath) {
 
         try {
-            String yumlLink = "cons://yuml.me/diagram/plain/class/" + grmr
+            String yumlLink = "https://yuml.me/diagram/scruffy/class/" + grmr
                     + ".png";
             URL url = new URL(yumlLink);
             HttpURLConnection ucon = (HttpURLConnection) url.openConnection();
-//           HttpURLconnection ucon = (HttpURLconnection) url.openConnection();
             ucon.setRequestMethod("GET");
             ucon.setRequestProperty("Accept", "application/json");
     		System.out.println(ucon.getResponseCode());
