@@ -82,11 +82,12 @@ public class StartToParse {
         return appends;
     }
 	private String uparse(CompilationUnit compUnit){
-		String appends = ",";
-		String cName = "";
-		String out = "";
-		String Variables = "";
-		String cshName = "";
+		    String cName = "";
+	        String cshName = "";
+	        String cMethods = "";
+	        String cVariables = "";
+	        String additions = ",";
+	        
 		ArrayList<String> makeFieldPublic = new ArrayList<String>();
         List<TypeDeclaration> ltd = compUnit.getTypes();
         Node node = ltd.get(0);
@@ -102,33 +103,30 @@ public class StartToParse {
         
      // Check extends, implements
         if (cid.getExtends() != null) {
-            appends += "[" + cshName + "] " + "-^ " + cid.getExtends();
-            appends += ",";
+            additions += "[" + cshName + "] " + "-^ " + cid.getExtends();
+            additions += ",";
         }
         if (cid.getImplements() != null) {
             List<ClassOrInterfaceType> interfaceList = (List<ClassOrInterfaceType>) cid
                     .getImplements();
-            for (ClassOrInterfaceType iface : interfaceList) {
-                appends += "[" + cshName + "] " + "-.-^ " + "["
-                        + "<<interface>>;" + iface + "]";
-                appends += ",";
+            for (ClassOrInterfaceType intface : interfaceList) {
+                additions += "[" + cshName + "] " + "-.-^ " + "["
+                        + "<<interface>>;" + intface + "]";
+                additions += ",";
             }
         }
-        
-     // Combine className, methods and Variables
-        out += cName;
-        if (!Variables.isEmpty()) {
-            out += "|" + changeBrackets(Variables);
+        // Combine cName, cMethods and cVariables
+        appends += cName;
+        if (!cVariables.isEmpty()) {
+            appends += "|" + changeBrackets(cVariables);
         }
-        if (!methods.isEmpty()) {
-            out += "|" + changeBrackets(methods);
+        if (!cMethods.isEmpty()) {
+            appends += "|" + changeBrackets(cMethods);
         }
-        out += "]";
-        out += appends;
-        return out;
+        appends += "]";
+        appends += additions;
+        return appends;
     }
-	}	
-	//}
 
 //This method changes the brackets
     private String changeBrackets(String brckts) {
@@ -138,16 +136,17 @@ public class StartToParse {
     brckts = brckts.replace(">", ")");
     return brckts;
     }
-	//Coverts AccessModifiers to symbols
-	 private String amToSym(String stringModifier) {
-		 { if(stringModifier.equals("private"))
-				return "-";
-			else if(stringModifier.equals("public"))
-				return "+";
-			else
-				return "";
-	        }
-	    }
+    //This method changes access modifiers to symbols
+    //gets variables access modifiers
+    private String symbolModifier(String stringModifier) {
+        if(stringModifier.contains("public"))
+        	return "+";
+        else if(stringModifier.contains("private"))
+              return "-";
+        else
+        	  return "";
+    }
+    
 	private String srcyumlUniquer(String code) {
         String[] codeLines = code.split(",");
         String[] uniqueCodeLines = new LinkedHashSet<String>(
