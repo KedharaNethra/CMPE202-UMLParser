@@ -1,11 +1,17 @@
+Start Tryouts with AspectJ
+Validate generate class diagrams with the Test Cases
+
+
+
 Test Case 1 - Done
 Validate the output for Test case1
 and fix the issues accordingly
-Test Case 2 - Refactoring has to be done
+Test Case 2 - Done
 Make necessary changes for Test case 2
+validated the ouput
 
-Fix bugs for Relationship issues 
-Modify and add scope of setters and getters
+Fix bugs for Relationship issues - Done
+Modify and add scope of setters and getters - Done
 
-Study on PlantUml for generating Sequence Diagrams.
+Study on PlantUml for generating Sequence Diagrams.- Done
 
