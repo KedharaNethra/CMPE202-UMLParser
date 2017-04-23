@@ -2,51 +2,53 @@ package kedhara;
 
 import java.io.*;
 import java.util.*;
-import java.lang.*;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.*;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.stmt.*;
-
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 public class StartToParse {
-	final String srcFdr;
-	final String outFdr;
-	HashMap<String, Boolean> map;
-	HashMap<String, String> classconmap;
 	String srcyuml;
-	ArrayList<CompilationUnit> compUnit;
-	//@To get srcyuml//
-	//constructor
-	
-	StartToParse(String srcFdr,String outPath){
-	this.srcFdr = srcFdr;
-	//@change@ @Important@ change the outfolder path accordingly
-	this.outFdr = srcFdr + "\\" + outPath + ".png";
-	map = new HashMap<String, Boolean>();
-	classconmap = new HashMap<String, String>();
-	srcyuml="";
-	}
-	
-	private String srcyumlSep(String code) {
-        String[] srcCode = code.split(",");
-	}
-	
-	public void start() throws Exception {
-        compUnit = getcompUnit(srcFdr);
+	String appends = "";
+	final String srcFdr;
+    final String outFdr;
+    HashMap<String, Boolean> map;
+    HashMap<String, String> mapCon;
+    ArrayList<CompilationUnit> compUnit;
+
+    StartToParse(String srcFdr, String oPath) {
+        this.srcFdr = srcFdr;
+      //@change@ @Important@ change the outfolder path accordingly
+        this.outFdr = srcFdr + "\\" + oPath + ".png";
+        map = new HashMap<String, Boolean>();
+        mapCon = new HashMap<String, String>();
+        srcyuml = "";
+    }
+
+    
+
+    private String srcSep(String src) {
+        String[] spSrc = src.split(",");
+        String[] spUnq = new LinkedHashSet<String>(
+                Arrays.asList(spSrc)).toArray(new String[0]);
+        String appends = String.join(",", spUnq);
+        return appends;
+    }
+    
+    public void start() throws Exception {
+        compUnit = readsrcFdr(srcFdr);
         buildMap(compUnit);
         for (CompilationUnit cu : compUnit)
             srcyuml += uparse(cu);
         srcyuml += uparseAdd();
-        srcyuml = srcyumlUniquer(srcyuml);
-        System.out.println("Unique Code: " + srcyuml);
-        GenerateDiagram.generatePNG(srcyuml, outPath);
+        srcyuml = srcSep(srcyuml);
+        System.out.println("Print srcyuml unique code: " + srcyuml);
+        UmlGenerator.generatePNG(srcyuml, outFdr); //UmlGenerator to generate the diagram
     }
-	
+    
+    
 	//If map.put //for interface its true
 	//for class its false
     private void buildMap(ArrayList<CompilationUnit> compUnit) {
@@ -194,7 +196,7 @@ public class StartToParse {
     boolean getDepenMultiple = false;
 	
 	//@Method to get .java source files from input folder//
-	private ArrayList<CompilationUnit> getCompUnit(String srcFdr) 
+	private ArrayList<CompilationUnit> readsrcFdr(String srcFdr) 
 			throws Exception{
 	    
 		//@Getting filenames of all files in a folder
