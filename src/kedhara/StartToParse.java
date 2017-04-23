@@ -62,7 +62,25 @@ public class StartToParse {
         }
     }
 
-	private String uparseAdd(){}
+	
+	private String uparseAdd() {
+        String appends = "";
+        Set<String> keys = mapCon.keySet(); // get all keys
+        for (String k : keys) {
+            String[] cls = k.split("-");
+            if (map.get(cls[0]))
+                appends += "[<<interface>>;" + cls[0] + "]";
+            else
+                appends += "[" + cls[0] + "]";
+            appends += mapCon.get(k); // Add connection
+            if (map.get(cls[1]))
+                appends += "[<<interface>>;" + cls[1] + "]";
+            else
+                appends += "[" + cls[1] + "]";
+            appends += ",";
+        }
+        return appends;
+    }
 	private String uparse(CompilationUnit compUnit){
 		String appends = ",";
 		String cName = "";
@@ -196,8 +214,24 @@ public class StartToParse {
     boolean getDepenMultiple = false;
 	
 	//@Method to get .java source files from input folder//
-	private ArrayList<CompilationUnit> readsrcFdr(String srcFdr) 
-			throws Exception{
+    private ArrayList<CompilationUnit> readsrcFdr(String srcFdr)
+            throws Exception {
+        File folder = new File(srcFdr);
+        ArrayList<CompilationUnit> compUnit = new ArrayList<CompilationUnit>();
+        for (final File f : folder.listFiles()) {
+            if (f.isFile() && f.getName().endsWith(".java")) {
+                FileInputStream in = new FileInputStream(f);
+                CompilationUnit cu;
+                try {
+                    cu = JavaParser.parse(in);
+                    compUnit.add(cu);
+                } finally {
+                    in.close();
+                }
+            }
+        }
+        return compUnit;
+    }
 	    
 		//@Getting filenames of all files in a folder
 	 File folder = new File(srcFdr);
