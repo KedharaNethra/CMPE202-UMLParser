@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src">
+	<classpathentry kind="src" output="target/classes" path="src/kedhara">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
@@ -11,17 +11,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/tneth/Desktop/javaparser-master/javaparser-core/target/javaparser-core-3.1.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tneth/eclipse/jee-neon/eclipse/plugins/org.eclipse.equinox.launcher_1.3.201.v20161025-1711.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tneth/Desktop/uml-parser-s/uml-parser/plantuml.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tneth/Desktop/uml-parser-s/uml-parser/UMLParser.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tneth/Downloads/core-3.4.2.v_883_R34x.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tneth/Downloads/resources-3.3.0-v20070604.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tneth/Downloads/org.eclipse.m2e.core-1.0.0.20110607-2117.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/tneth/Downloads/plantuml.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
