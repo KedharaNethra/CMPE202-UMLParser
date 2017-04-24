@@ -1,4 +1,4 @@
-package kedhara;
+//package kedhara;
 
 public class Umlparser {
 
