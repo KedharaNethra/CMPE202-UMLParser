@@ -4,7 +4,8 @@ public class Umlparser {
 
     public static void main(String[] args) throws Exception {
         if (args[0].equals("class")) {
-        	System.out.println("Generate class");
+        	System.out.println("Choose for the diagram type");
+        	System.out.println("Requested for" + args[0] + "Diagram");
             StartToParse sp = new StartToParse(args[1], args[2]);
             sp.start();
         }
