@@ -1,4 +1,4 @@
-package kedhara;
+//package kedhara;
 
 import java.io.*;
 import java.util.*;
@@ -9,25 +9,40 @@ import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+
+
 public class StartToParse {
 	String srcyuml;
 	String appends = "";
 	final String srcFdr;
     final String outFdr;
     HashMap<String, Boolean> map;
-    HashMap<String, String> mapCon;
+    HashMap<String, String> classconmap;
     ArrayList<CompilationUnit> compUnit;
-
+    Map<String,List> classInterfaceDictionary = new HashMap<String,List>();
+    List classList = new ArrayList<String>();
+    List interfaceList = new ArrayList<String>();
     StartToParse(String srcFdr, String oPath) {
         this.srcFdr = srcFdr;
       //@change@ @Important@ change the outfolder path accordingly
         this.outFdr = srcFdr + "\\" + oPath + ".png";
         map = new HashMap<String, Boolean>();
-        mapCon = new HashMap<String, String>();
+        classconmap = new HashMap<String, String>();
         srcyuml = "";
     }
 
-    
+    public void start() throws Exception {
+        compUnit = readsrcFdr(srcFdr);
+        buildMap(compUnit);
+        System.out.println(classInterfaceDictionary);
+        
+        for (CompilationUnit cu : compUnit)
+            srcyuml += parser(cu);
+        srcyuml += parseAdditions();
+        srcyuml = srcSep(srcyuml);
+        System.out.println("Print srcyuml unique code: " + srcyuml);
+        UmlGenerator.generatePNG(srcyuml, outFdr); //UmlGenerator to generate the diagram
+    }
 
     private String srcSep(String src) {
         String[] spSrc = src.split(",");
@@ -36,62 +51,59 @@ public class StartToParse {
         String appends = String.join(",", spUnq);
         return appends;
     }
-    
-    public void start() throws Exception {
-        compUnit = readsrcFdr(srcFdr);
-        buildMap(compUnit);
-        for (CompilationUnit cu : compUnit)
-            srcyuml += uparse(cu);
-        srcyuml += uparseAdd();
-        srcyuml = srcSep(srcyuml);
-        System.out.println("Print srcyuml unique code: " + srcyuml);
-        UmlGenerator.generatePNG(srcyuml, outFdr); //UmlGenerator to generate the diagram
-    }
-    
-    
-	//If map.put //for interface its true
-	//for class its false
-    private void buildMap(ArrayList<CompilationUnit> compUnit) {
-        for (CompilationUnit cu : compUnit) {
-            List<TypeDeclaration> clist = cu.getTypes();
-            for (Node nd : clist) {
-                ClassOrInterfaceDeclaration ci = (ClassOrInterfaceDeclaration) nd;
-                map.put(ci.getName(), ci.isInterface()); 
-                                                           
+    private ArrayList<CompilationUnit> readsrcFdr(String srcFdr)
+            throws Exception {
+        File folder = new File(srcFdr);
+        ArrayList<CompilationUnit> compUnit = new ArrayList<CompilationUnit>();
+        for (final File f : folder.listFiles()) {
+            if (f.isFile() && f.getName().endsWith(".java")) {
+                FileInputStream in = new FileInputStream(f);
+                CompilationUnit cu;
+                try {
+                    cu = JavaParser.parse(in);
+                    compUnit.add(cu);
+                } finally {
+                    in.close();
+                }
             }
         }
+        return compUnit;
     }
-
-	
-	private String uparseAdd() {
+    private String parseAdditions() {
         String appends = "";
-        Set<String> keys = mapCon.keySet(); // get all keys
-        for (String k : keys) {
-            String[] cls = k.split("-");
-            if (map.get(cls[0]))
-                appends += "[<<interface>>;" + cls[0] + "]";
+        Set<String> keys = classconmap.keySet(); // get all keys
+        for (String i : keys) {
+            String[] classes = i.split("-");
+            //if (map.get(classes[0]))
+            if(classInterfaceDictionary.get("interface").contains(classes[0]))
+                appends += "[<<interface>>;" + classes[0] + "]";
             else
-                appends += "[" + cls[0] + "]";
-            appends += mapCon.get(k); // Add connection
-            if (map.get(cls[1]))
-                appends += "[<<interface>>;" + cls[1] + "]";
+                appends += "[" + classes[0] + "]";
+            appends += classconmap.get(i); // Add connection
+            //if (map.get(classes[1]))
+            if(classInterfaceDictionary.get("interface").contains(classes[1]))
+                appends += "[<<interface>>;" + classes[1] + "]";
             else
-                appends += "[" + cls[1] + "]";
+                appends += "[" + classes[1] + "]";
             appends += ",";
         }
         return appends;
     }
-	private String uparse(CompilationUnit compUnit){
-		    String cName = "";
-	        String cshName = "";
-	        String cMethods = "";
-	        String cVariables = "";
-	        String additions = ",";
-	        
-		ArrayList<String> makeFieldPublic = new ArrayList<String>();
-        List<TypeDeclaration> ltd = compUnit.getTypes();
-        Node node = ltd.get(0);
-		// Gets cName
+
+    private String parser(CompilationUnit cu) {
+        String cName = "";
+        String cshName = "";
+        String cMethods = "";
+        String cVariables = "";
+        String additions = ",";
+        
+
+
+        ArrayList<String> makeFieldPublic = new ArrayList<String>();
+        List<TypeDeclaration> ltd = cu.getTypes();
+        Node node = ltd.get(0); // assuming no nested classes
+
+        // Get cName
         ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) node;
         if (cid.isInterface()) {
             cName = "[" + "<<interface>>;";
@@ -100,8 +112,169 @@ public class StartToParse {
         }
         cName += cid.getName();
         cshName = cid.getName();
-        
-     // Check extends, implements
+
+        // Parsing cMethods
+        boolean nextParam = false;
+        for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
+            // Get cMethods
+            if (bod instanceof ConstructorDeclaration) {
+                ConstructorDeclaration cd = ((ConstructorDeclaration) bod);
+                if (cd.getDeclarationAsString().startsWith("public")
+                        && !cid.isInterface()) {
+                    if (nextParam)
+                        cMethods += ";";
+                    cMethods += "+ " + cd.getName() + "(";
+                    for (Object gcn : cd.getChildrenNodes()) {
+                        if (gcn instanceof Parameter) {
+                            Parameter paramCast = (Parameter) gcn;
+                            String paramClass = paramCast.getType().toString();
+                            String paramName = paramCast.getChildrenNodes()
+                                    .get(0).toString();
+                            cMethods += paramName + " : " + paramClass;
+                            //if (map.containsKey(paramClass)
+                            if((classInterfaceDictionary.get("class").contains(paramClass) ||
+                            		classInterfaceDictionary.get("interface").contains(paramClass))
+                            	&& classInterfaceDictionary.get("class").contains(cshName)) {
+                                additions += "[" + cshName
+                                        + "] uses -.->";
+                                //if (map.get(paramClass))
+                                if(classInterfaceDictionary.get("interface").contains(paramClass))
+                                    additions += "[<<interface>>;" + paramClass
+                                            + "]";
+                                else
+                                    additions += "[" + paramClass + "]";
+                            }
+                            additions += ",";
+                        }
+                    }
+                    cMethods += ")";
+                    nextParam = true;
+                }
+            }
+        }
+        for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
+            if (bod instanceof MethodDeclaration) {
+                MethodDeclaration md = ((MethodDeclaration) bod);
+                // Get only public cMethods
+                if (md.getDeclarationAsString().startsWith("public")
+                        && !cid.isInterface()) {
+                    // Identify Setters and Getters
+                    if (md.getName().startsWith("set")
+                            || md.getName().startsWith("get")) {
+                        String varName = md.getName().substring(3);
+                        makeFieldPublic.add(varName.toLowerCase());
+                    } else {
+                        if (nextParam)
+                            cMethods += ";";
+                        cMethods += "+ " + md.getName() + "(";
+                        for (Object gcn : md.getChildrenNodes()) {
+                            if (gcn instanceof Parameter) {
+                                Parameter paramCast = (Parameter) gcn;
+                                String paramClass = paramCast.getType()
+                                        .toString();
+                                String paramName = paramCast.getChildrenNodes()
+                                        .get(0).toString();
+                                cMethods += paramName + " : " + paramClass;
+                               // if (map.containsKey(paramClass)
+                                 //       && !map.get(cshName)) {
+                                if(classInterfaceDictionary.get("interface").contains(paramClass) &&
+                                		classInterfaceDictionary.get("class").contains(cshName)){
+                                    additions += "[" + cshName
+                                            + "] uses -.->";
+                                    //if (map.get(paramClass))
+                                    if(classInterfaceDictionary.get("interface").contains(paramClass))
+                                        additions += "[<<interface>>;"
+                                                + paramClass + "]";
+                                    else
+                                        additions += "[" + paramClass + "]";
+                                }
+                                additions += ",";
+                            } else {
+                                String methodBody[] = gcn.toString().split(" ");
+                                for (String brckts : methodBody) {
+                                    //if (map.containsKey(brckts)
+                                	if ((classInterfaceDictionary.get("class").contains(brckts) ||
+                                			classInterfaceDictionary.get("interface").contains(brckts))
+                                            && classInterfaceDictionary.get("class").contains(cshName)) {
+                                        additions += "[" + cshName
+                                                + "] uses -.->";
+                                        //if (map.get(brckts))
+                                        	if(classInterfaceDictionary.get("interface").contains(brckts))
+                                            additions += "[<<interface>>;" + brckts
+                                                    + "]";
+                                        else
+                                            additions += "[" + brckts + "]";
+                                        additions += ",";
+                                    }
+                                }
+                            }
+                        }
+                        cMethods += ") : " + md.getType();
+                        nextParam = true;
+                    }
+                }
+            }
+        }
+        // Parsing cVariables
+        boolean nextField = false;
+        for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
+            if (bod instanceof FieldDeclaration) {
+                FieldDeclaration fd = ((FieldDeclaration) bod);
+                String cVariablescope = symbolModifier(
+                        bod.toStringWithoutComments().substring(0,
+                                bod.toStringWithoutComments().indexOf(" ")));
+                String fieldClass = changeBrackets(fd.getType().toString());
+                String fieldName = fd.getChildrenNodes().get(1).toString();
+                if (fieldName.contains("="))
+                    fieldName = fd.getChildrenNodes().get(1).toString()
+                            .substring(0, fd.getChildrenNodes().get(1)
+                                    .toString().indexOf("=") - 1);
+                // Change scope of getter, setters
+                if (cVariablescope.equals("-")
+                        && makeFieldPublic.contains(fieldName.toLowerCase())) {
+                    cVariablescope = "+";
+                }
+                String getDepen = "";
+                boolean getDepenMultiple = false;
+                if (fieldClass.contains("(")) {
+                    getDepen = fieldClass.substring(fieldClass.indexOf("(") + 1,
+                            fieldClass.indexOf(")"));
+                    getDepenMultiple = true;
+                }
+                //else if (map.containsKey(fieldClass)) {
+                else if(classInterfaceDictionary.get("interface").contains(fieldClass)){
+                    getDepen = fieldClass;
+                }
+                
+                if (getDepen.length() > 0 && classInterfaceDictionary.get("interface").contains(getDepen)) {
+                //if (getDepen.length() > 0 && map.containsKey(getDepen)) {
+                    String connection = "-";
+
+                    if (classconmap
+                            .containsKey(getDepen + "-" + cshName)) {
+                        connection = classconmap
+                                .get(getDepen + "-" + cshName);
+                        if (getDepenMultiple)
+                            connection = "*" + connection;
+                        classconmap.put(getDepen + "-" + cshName,
+                                connection);
+                    } else {
+                        if (getDepenMultiple)
+                            connection += "*";
+                        classconmap.put(cshName + "-" + getDepen,
+                                connection);
+                    }
+                }
+                if (cVariablescope == "+" || cVariablescope == "-") {
+                    if (nextField)
+                        cVariables += "; ";
+                    cVariables += cVariablescope + " " + fieldName + " : " + fieldClass;
+                    nextField = true;
+                }
+            }
+
+        }
+        // Check extends, implements
         if (cid.getExtends() != null) {
             additions += "[" + cshName + "] " + "-^ " + cid.getExtends();
             additions += ",";
@@ -127,17 +300,17 @@ public class StartToParse {
         appends += additions;
         return appends;
     }
-
-//This method changes the brackets
+    
+    // This method changes the brackets
     private String changeBrackets(String brckts) {
-    brckts = brckts.replace("[", "(");
-    brckts = brckts.replace("]", ")");
-    brckts = brckts.replace("<", "(");
-    brckts = brckts.replace(">", ")");
-    return brckts;
+        brckts = brckts.replace("[", "(");
+        brckts = brckts.replace("]", ")");
+        brckts = brckts.replace("<", "(");
+        brckts = brckts.replace(">", ")");
+        return brckts;
     }
-    //This method changes access modifiers to symbols
-    //gets variables access modifiers
+
+    //This method gets variable's AccessModifier and changes them to symbol
     private String symbolModifier(String stringModifier) {
         if(stringModifier.contains("public"))
         	return "+";
@@ -147,130 +320,27 @@ public class StartToParse {
         	  return "";
     }
     
-	private String srcyumlUniquer(String code) {
-        String[] codeLines = code.split(",");
-        String[] uniqueCodeLines = new LinkedHashSet<String>(
-                Arrays.asList(codeLines)).toArray(new String[0]);
-        String out = String.join(",", uniqueCodeLines);
-        return out;
-    }
-	//@Method Map Parse - To get keys and to add the connections
-	private String mapParse(){
-		String output = "";
-		//@to get the keys
-		Set<String> keys = classconmap.keySet();
-		for(String k : keys) {
-			String[] cnames = k.split("-");
-			if(map.get(cnames[0]))
-				output += "[<<interface>>;" + cnames[0] + "]";
-			else
-				output +="[" + cnames[0] + "]";
-			//@to add the connection
-			output += classconmap.get(k);
-			if(map.get(cnames[1]))
-				output += "[<<interface>>;" + cnames[1] + "]";
-			else
-				output +="[" + cnames[1] + "]";
-			output += ",";
-			
-		}
-		return output;
-	}
-	// To-ParseMthds
-    boolean nextParam = false;
-    for (BodyDeclaration bd : ((TypeDeclaration) node).getMembers()) {}
-    // Get the  Methods
-    if (bd instanceof ConstructorDeclaration) {
-        ConstructorDeclaration cd = ((ConstructorDeclaration) bd);
-        if (cd.getDeclarationAsString().startsWith("public")
-                && !coi.isInterface()) {
-            if (nextParam)
-                methods += ";";
-            methods += "+ " + cd.getName() + "(";
-            for (Object gcn : cd.getChildrenNodes()) {
-                if (gcn instanceof Parameter) {
-                    Parameter paramCast = (Parameter) gcn;
-                    String paramClass = paramCast.getType().toString();
-                    String paramName = paramCast.getChildrenNodes()
-                            .get(0).toString();
-                    methods += paramName + " : " + paramClass;
-                    if (map.containsKey(paramClass)
-                            && !map.get(classShortName)) {
-                        additions += "[" + classShortName
-                                + "] uses -.->";
-                        if (map.get(paramClass))
-                            additions += "[<<interface>>;" + paramClass
-                                    + "]";
-                        else
-                            additions += "[" + paramClass + "]";
-                    }
-                    additions += ",";
+
+    private void buildMap(ArrayList<CompilationUnit> compUnit) {
+        for (CompilationUnit cu : compUnit) {
+            List<TypeDeclaration> cl = cu.getTypes();
+            for (Node n : cl) {
+                ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) n;
+                //map.put(cid.getName(), cid.isInterface());
+                // false is class,
+               // true is interface
+                if(cid.isInterface())
+                {
+                	interfaceList.add(cid.getName());
                 }
+                else{
+                	classList.add(cid.getName());
+                }
+                
+                classInterfaceDictionary.put("class",classList);
+                classInterfaceDictionary.put("interface", interfaceList);
             }
-            methods += ")";
-            nextParam = true;
         }
     }
+
 }
-	
-	// Change scope of getter, setters
-    if (fieldScope.equals("-")
-            && makeFieldPublic.contains(fieldName.toLowerCase())) {
-        fieldScope = "+";
-    }
-    String getDepen = "";
-    boolean getDepenMultiple = false;
-	
-	//@Method to get .java source files from input folder//
-    private ArrayList<CompilationUnit> readsrcFdr(String srcFdr)
-            throws Exception {
-        File folder = new File(srcFdr);
-        ArrayList<CompilationUnit> compUnit = new ArrayList<CompilationUnit>();
-        for (final File f : folder.listFiles()) {
-            if (f.isFile() && f.getName().endsWith(".java")) {
-                FileInputStream in = new FileInputStream(f);
-                CompilationUnit cu;
-                try {
-                    cu = JavaParser.parse(in);
-                    compUnit.add(cu);
-                } finally {
-                    in.close();
-                }
-            }
-        }
-        return compUnit;
-    }
-	    
-		//@Getting filenames of all files in a folder
-	 File folder = new File(srcFdr);
-	 ArrayList<CompilationUnit> compUnit = new ArrayList<CompilationUnit>();
-		 
-	 //@@For loop for Arrays- Variable file holds the current value from the folder array
-	 for (final File jf : folder.listFiles()) {
-		 if (jf.isFile() && jf.getName().endsWith(".java")) {
-		    FileInputStream filein = new FileInputStream(jf);
-		    CompilationUnit comp;
-		    try{
-		    	comp = JavaParser.parse(filein);
-		    	compUnit.add(comp);
-		    } finally {
-		    	filein.close();
-		    }
-		    
-		 }
-	 }
-		 return compUnit;
-	 }
-	
-	
-	}
-
-
-	
-
-		
-	
-	
-	
-
-
