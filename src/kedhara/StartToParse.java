@@ -221,7 +221,7 @@ public class StartToParse {
                     fieldName = fd.getChildrenNodes().get(1).toString()
                             .substring(0, fd.getChildrenNodes().get(1)
                                     .toString().indexOf("=") - 1);
-                // Change scope of getter, setters
+                // To change scope of getter, setters
                 if (cVariablescope.equals("-")
                         && makeFieldPublic.contains(fieldName.toLowerCase())) {
                     cVariablescope = "+";
