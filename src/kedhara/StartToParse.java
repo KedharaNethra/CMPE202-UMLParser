@@ -25,7 +25,8 @@ public class StartToParse {
     StartToParse(String srcFdr, String oPath) {
         this.srcFdr = srcFdr;
       //@change@ @Important@ change the outfolder path accordingly
-        this.outFdr = srcFdr + "\\" + oPath + ".png";
+     //   String oPath = "C:\\Users\\tneth\\Desktop\\Check\\New"+oPath+".png";
+       this.outFdr = srcFdr + "\\" + oPath + ".png";
         map = new HashMap<String, Boolean>();
         classconmap = new HashMap<String, String>();
         srcyuml = "";
@@ -74,13 +75,11 @@ public class StartToParse {
         Set<String> keys = classconmap.keySet(); // get all keys
         for (String i : keys) {
             String[] classes = i.split("-");
-            //if (map.get(classes[0]))
             if(classInterfaceDictionary.get("interface").contains(classes[0]))
                 appends += "[<<interface>>;" + classes[0] + "]";
             else
                 appends += "[" + classes[0] + "]";
             appends += classconmap.get(i); // Add connection
-            //if (map.get(classes[1]))
             if(classInterfaceDictionary.get("interface").contains(classes[1]))
                 appends += "[<<interface>>;" + classes[1] + "]";
             else
@@ -131,14 +130,12 @@ public class StartToParse {
                             String paramName = paramCast.getChildrenNodes()
                                     .get(0).toString();
                             cMethods += paramName + " : " + paramClass;
-                            //if (map.containsKey(paramClass)
-                            if((classInterfaceDictionary.get("class").contains(paramClass) ||
+                         if((classInterfaceDictionary.get("class").contains(paramClass) ||
                             		classInterfaceDictionary.get("interface").contains(paramClass))
                             	&& classInterfaceDictionary.get("class").contains(cshName)) {
                                 additions += "[" + cshName
                                         + "] uses -.->";
-                                //if (map.get(paramClass))
-                                if(classInterfaceDictionary.get("interface").contains(paramClass))
+                                     if(classInterfaceDictionary.get("interface").contains(paramClass))
                                     additions += "[<<interface>>;" + paramClass
                                             + "]";
                                 else
@@ -155,10 +152,10 @@ public class StartToParse {
         for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
             if (bod instanceof MethodDeclaration) {
                 MethodDeclaration md = ((MethodDeclaration) bod);
-                // Get only public cMethods
+                // To get only public cMethods
                 if (md.getDeclarationAsString().startsWith("public")
                         && !cid.isInterface()) {
-                    // Identify Setters and Getters
+                    // 	Find Setters and Getters
                     if (md.getName().startsWith("set")
                             || md.getName().startsWith("get")) {
                         String varName = md.getName().substring(3);
@@ -175,14 +172,11 @@ public class StartToParse {
                                 String paramName = paramCast.getChildrenNodes()
                                         .get(0).toString();
                                 cMethods += paramName + " : " + paramClass;
-                               // if (map.containsKey(paramClass)
-                                 //       && !map.get(cshName)) {
-                                if(classInterfaceDictionary.get("interface").contains(paramClass) &&
+                            if(classInterfaceDictionary.get("interface").contains(paramClass) &&
                                 		classInterfaceDictionary.get("class").contains(cshName)){
                                     additions += "[" + cshName
                                             + "] uses -.->";
-                                    //if (map.get(paramClass))
-                                    if(classInterfaceDictionary.get("interface").contains(paramClass))
+                            if(classInterfaceDictionary.get("interface").contains(paramClass))
                                         additions += "[<<interface>>;"
                                                 + paramClass + "]";
                                     else
@@ -192,14 +186,12 @@ public class StartToParse {
                             } else {
                                 String methodBody[] = gcn.toString().split(" ");
                                 for (String brckts : methodBody) {
-                                    //if (map.containsKey(brckts)
                                 	if ((classInterfaceDictionary.get("class").contains(brckts) ||
                                 			classInterfaceDictionary.get("interface").contains(brckts))
                                             && classInterfaceDictionary.get("class").contains(cshName)) {
                                         additions += "[" + cshName
                                                 + "] uses -.->";
-                                        //if (map.get(brckts))
-                                        	if(classInterfaceDictionary.get("interface").contains(brckts))
+                                      	if(classInterfaceDictionary.get("interface").contains(brckts))
                                             additions += "[<<interface>>;" + brckts
                                                     + "]";
                                         else
@@ -241,15 +233,12 @@ public class StartToParse {
                             fieldClass.indexOf(")"));
                     getDepenMultiple = true;
                 }
-                //else if (map.containsKey(fieldClass)) {
                 else if(classInterfaceDictionary.get("interface").contains(fieldClass)){
                     getDepen = fieldClass;
                 }
                 
                 if (getDepen.length() > 0 && classInterfaceDictionary.get("interface").contains(getDepen)) {
-                //if (getDepen.length() > 0 && map.containsKey(getDepen)) {
                     String connection = "-";
-
                     if (classconmap
                             .containsKey(getDepen + "-" + cshName)) {
                         connection = classconmap
@@ -326,7 +315,6 @@ public class StartToParse {
             List<TypeDeclaration> cl = cu.getTypes();
             for (Node n : cl) {
                 ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) n;
-                //map.put(cid.getName(), cid.isInterface());
                 // false is class,
                // true is interface
                 if(cid.isInterface())
