@@ -7,12 +7,12 @@ public class Umlparser {
         	System.out.println("Choose for the diagram type");
         	System.out.println("Requested for" + args[0] + "Diagram");
             StartToParse sp = new StartToParse(args[1], args[2]);
-            sp.start();
+            sp.dobuildComp();
+            System.out.println("Generated Successfully");
         }
  //       else if (args[0].equals(("sequence"))){
  ///           System.out.println("Entered Sequence");
-  //      	ParseSeqCode  seq = new ParseSeqCode(args[1],args[2],args[3],args[4]);
-  //          seq.start();
+  //           
   //      }
             
         else
