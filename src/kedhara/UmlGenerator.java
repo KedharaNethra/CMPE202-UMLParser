@@ -14,8 +14,8 @@ public class UmlGenerator {
 	public static Boolean generatePNG(String grmr, String oPath) {
 
         try {
-            String yumlLink = "https://yuml.me/diagram/scruffy/class/" + grmr
-                    + ".png";
+            String yumlLink = "https://yuml.me/diagram/scruffy/class/" + grmr + ".png";
+  
             URL url = new URL(yumlLink);
             HttpURLConnection ucon = (HttpURLConnection) url.openConnection();
             ucon.setRequestMethod("GET");
@@ -24,7 +24,7 @@ public class UmlGenerator {
 
             if (ucon.getResponseCode() != 200) {
                 throw new RuntimeException(
-                        "connection Failed : Error code is : " + ucon.getResponseCode());
+                        "yuml connection failed : Error code is : " + ucon.getResponseCode());
             }
             FileOutputStream os = new FileOutputStream(new File(oPath));
             int rd = 0;
