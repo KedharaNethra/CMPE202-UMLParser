@@ -10,32 +10,31 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 
-
 public class StartToParse {
 	String srcyuml;
 	String appends = "";
 	final String srcFdr;
     final String outFdr;
-    HashMap<String, Boolean> map;
-    HashMap<String, String> classconmap;
+ //@@Define Necessary maps and List's needed@@//
+    TreeMap<String, String> doConnection;
     ArrayList<CompilationUnit> compUnit;
-    Map<String,List> classInterfaceDictionary = new HashMap<String,List>();
+    Map<String,List> doCIDictionary = new HashMap<String,List>();
     List classList = new ArrayList<String>();
     List interfaceList = new ArrayList<String>();
     StartToParse(String srcFdr, String oPath) {
         this.srcFdr = srcFdr;
       //@change@ @Important@ change the outfolder path accordingly
-     //   String oPath = "C:\\Users\\tneth\\Desktop\\Check\\New"+oPath+".png";
-       this.outFdr = srcFdr + "\\" + oPath + ".png";
-        map = new HashMap<String, Boolean>();
-        classconmap = new HashMap<String, String>();
+        this.outFdr = srcFdr + "/" + oPath + ".png";
+        System.out.println("check path" + outFdr);
+//        doConnection = new HashMap<String, String>();
+        doConnection = new TreeMap<String, String>();
         srcyuml = "";
     }
 
-    public void start() throws Exception {
+    public void dobuildComp() throws Exception {
         compUnit = readsrcFdr(srcFdr);
-        buildMap(compUnit);
-        System.out.println(classInterfaceDictionary);
+        addToList(compUnit);
+        System.out.println(doCIDictionary);
         
         for (CompilationUnit cu : compUnit)
             srcyuml += parser(cu);
@@ -72,15 +71,17 @@ public class StartToParse {
     }
     private String parseAdditions() {
         String appends = "";
-        Set<String> keys = classconmap.keySet(); // get all keys
+        Set<String> keys = doConnection.keySet(); // get all keys
         for (String i : keys) {
             String[] classes = i.split("-");
-            if(classInterfaceDictionary.get("interface").contains(classes[0]))
+            //if (doMap.get(classes[0]))
+            if(doCIDictionary.get("interface").contains(classes[0]))
                 appends += "[<<interface>>;" + classes[0] + "]";
             else
                 appends += "[" + classes[0] + "]";
-            appends += classconmap.get(i); // Add connection
-            if(classInterfaceDictionary.get("interface").contains(classes[1]))
+            appends += doConnection.get(i); // Add connection
+            //if (doMap.get(classes[1]))
+            if(doCIDictionary.get("interface").contains(classes[1]))
                 appends += "[<<interface>>;" + classes[1] + "]";
             else
                 appends += "[" + classes[1] + "]";
@@ -100,10 +101,11 @@ public class StartToParse {
 
         ArrayList<String> makeFieldPublic = new ArrayList<String>();
         List<TypeDeclaration> ltd = cu.getTypes();
-        Node node = ltd.get(0); // assuming no nested classes
+        //lets check as there is no nested type classes.
+        Node n1 = ltd.get(0); 
 
         // Get cName
-        ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) node;
+        ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) n1;
         if (cid.isInterface()) {
             cName = "[" + "<<interface>>;";
         } else {
@@ -114,7 +116,7 @@ public class StartToParse {
 
         // Parsing cMethods
         boolean nextParam = false;
-        for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
+        for (BodyDeclaration bod : ((TypeDeclaration) n1).getMembers()) {
             // Get cMethods
             if (bod instanceof ConstructorDeclaration) {
                 ConstructorDeclaration cd = ((ConstructorDeclaration) bod);
@@ -130,12 +132,14 @@ public class StartToParse {
                             String paramName = paramCast.getChildrenNodes()
                                     .get(0).toString();
                             cMethods += paramName + " : " + paramClass;
-                         if((classInterfaceDictionary.get("class").contains(paramClass) ||
-                            		classInterfaceDictionary.get("interface").contains(paramClass))
-                            	&& classInterfaceDictionary.get("class").contains(cshName)) {
+                            //if (doMap.containsKey(paramClass)
+                            if((doCIDictionary.get("class").contains(paramClass) ||
+                            		doCIDictionary.get("interface").contains(paramClass))
+                            	&& doCIDictionary.get("class").contains(cshName)) {
                                 additions += "[" + cshName
                                         + "] uses -.->";
-                                     if(classInterfaceDictionary.get("interface").contains(paramClass))
+                                //if (doMap.get(paramClass))
+                                if(doCIDictionary.get("interface").contains(paramClass))
                                     additions += "[<<interface>>;" + paramClass
                                             + "]";
                                 else
@@ -149,13 +153,13 @@ public class StartToParse {
                 }
             }
         }
-        for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
+        for (BodyDeclaration bod : ((TypeDeclaration) n1).getMembers()) {
             if (bod instanceof MethodDeclaration) {
                 MethodDeclaration md = ((MethodDeclaration) bod);
-                // To get only public cMethods
+                // Get only public cMethods
                 if (md.getDeclarationAsString().startsWith("public")
                         && !cid.isInterface()) {
-                    // 	Find Setters and Getters
+                    // Identify Setters and Getters
                     if (md.getName().startsWith("set")
                             || md.getName().startsWith("get")) {
                         String varName = md.getName().substring(3);
@@ -172,11 +176,14 @@ public class StartToParse {
                                 String paramName = paramCast.getChildrenNodes()
                                         .get(0).toString();
                                 cMethods += paramName + " : " + paramClass;
-                            if(classInterfaceDictionary.get("interface").contains(paramClass) &&
-                                		classInterfaceDictionary.get("class").contains(cshName)){
+                               // if (doMap.containsKey(paramClass)
+                                 //       && !doMap.get(cshName)) {
+                                if(doCIDictionary.get("interface").contains(paramClass) &&
+                                		doCIDictionary.get("class").contains(cshName)){
                                     additions += "[" + cshName
                                             + "] uses -.->";
-                            if(classInterfaceDictionary.get("interface").contains(paramClass))
+                                    //if (doMap.get(paramClass))
+                                    if(doCIDictionary.get("interface").contains(paramClass))
                                         additions += "[<<interface>>;"
                                                 + paramClass + "]";
                                     else
@@ -186,12 +193,14 @@ public class StartToParse {
                             } else {
                                 String methodBody[] = gcn.toString().split(" ");
                                 for (String brckts : methodBody) {
-                                	if ((classInterfaceDictionary.get("class").contains(brckts) ||
-                                			classInterfaceDictionary.get("interface").contains(brckts))
-                                            && classInterfaceDictionary.get("class").contains(cshName)) {
+                                    //if (doMap.containsKey(brckts)
+                                	if ((doCIDictionary.get("class").contains(brckts) ||
+                                			doCIDictionary.get("interface").contains(brckts))
+                                            && doCIDictionary.get("class").contains(cshName)) {
                                         additions += "[" + cshName
                                                 + "] uses -.->";
-                                      	if(classInterfaceDictionary.get("interface").contains(brckts))
+                                        //if (doMap.get(brckts))
+                                        	if(doCIDictionary.get("interface").contains(brckts))
                                             additions += "[<<interface>>;" + brckts
                                                     + "]";
                                         else
@@ -209,7 +218,7 @@ public class StartToParse {
         }
         // Parsing cVariables
         boolean nextField = false;
-        for (BodyDeclaration bod : ((TypeDeclaration) node).getMembers()) {
+        for (BodyDeclaration bod : ((TypeDeclaration) n1).getMembers()) {
             if (bod instanceof FieldDeclaration) {
                 FieldDeclaration fd = ((FieldDeclaration) bod);
                 String cVariablescope = symbolModifier(
@@ -221,7 +230,7 @@ public class StartToParse {
                     fieldName = fd.getChildrenNodes().get(1).toString()
                             .substring(0, fd.getChildrenNodes().get(1)
                                     .toString().indexOf("=") - 1);
-                // To change scope of getter, setters
+                // Change scope of getter, setters
                 if (cVariablescope.equals("-")
                         && makeFieldPublic.contains(fieldName.toLowerCase())) {
                     cVariablescope = "+";
@@ -233,24 +242,27 @@ public class StartToParse {
                             fieldClass.indexOf(")"));
                     getDepenMultiple = true;
                 }
-                else if(classInterfaceDictionary.get("interface").contains(fieldClass)){
+                //else if (doMap.containsKey(fieldClass)) {
+                else if(doCIDictionary.get("interface").contains(fieldClass) || doCIDictionary.get("class").contains(fieldClass)){
                     getDepen = fieldClass;
                 }
                 
-                if (getDepen.length() > 0 && classInterfaceDictionary.get("interface").contains(getDepen)) {
+                if (getDepen.length() > 0 && (doCIDictionary.get("interface").contains(getDepen) || doCIDictionary.get("class").contains(getDepen))) {
+                //if (getDepen.length() > 0 && doMap.containsKey(getDepen)) {
                     String connection = "-";
-                    if (classconmap
+
+                    if (doConnection
                             .containsKey(getDepen + "-" + cshName)) {
-                        connection = classconmap
+                        connection = doConnection
                                 .get(getDepen + "-" + cshName);
                         if (getDepenMultiple)
                             connection = "*" + connection;
-                        classconmap.put(getDepen + "-" + cshName,
+                        doConnection.put(getDepen + "-" + cshName,
                                 connection);
                     } else {
                         if (getDepenMultiple)
                             connection += "*";
-                        classconmap.put(cshName + "-" + getDepen,
+                        doConnection.put(cshName + "-" + getDepen,
                                 connection);
                     }
                 }
@@ -269,11 +281,10 @@ public class StartToParse {
             additions += ",";
         }
         if (cid.getImplements() != null) {
-            List<ClassOrInterfaceType> interfaceList = (List<ClassOrInterfaceType>) cid
-                    .getImplements();
-            for (ClassOrInterfaceType intface : interfaceList) {
+            List<ClassOrInterfaceType> interfaceList = (List<ClassOrInterfaceType>) cid.getImplements();
+            for (ClassOrInterfaceType cit : interfaceList) {
                 additions += "[" + cshName + "] " + "-.-^ " + "["
-                        + "<<interface>>;" + intface + "]";
+                        + "<<interface>>;" + cit + "]";
                 additions += ",";
             }
         }
@@ -310,12 +321,12 @@ public class StartToParse {
     }
     
 
-    private void buildMap(ArrayList<CompilationUnit> compUnit) {
+    private void addToList(ArrayList<CompilationUnit> compUnit) {
         for (CompilationUnit cu : compUnit) {
             List<TypeDeclaration> cl = cu.getTypes();
-            for (Node n : cl) {
-                ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) n;
-                // false is class,
+            for (Node e : cl) {
+                ClassOrInterfaceDeclaration cid = (ClassOrInterfaceDeclaration) e;
+                                // false is class,
                // true is interface
                 if(cid.isInterface())
                 {
@@ -325,10 +336,12 @@ public class StartToParse {
                 	classList.add(cid.getName());
                 }
                 
-                classInterfaceDictionary.put("class",classList);
-                classInterfaceDictionary.put("interface", interfaceList);
+                doCIDictionary.put("class",classList);
+                doCIDictionary.put("interface", interfaceList);
             }
         }
     }
 
 }
+
+
