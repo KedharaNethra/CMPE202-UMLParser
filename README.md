@@ -65,4 +65,43 @@ WaffleIO:
 Is a free project management tool that enables the users to manage and monitor their project tasks.  This will automatically move the issue to the Done column on your Waffle board. WaffleIO and Kanban helps to visualize the workflow and bottlenecks of the project.
 Registered for a free account in https://waffle.io/. The content of the waffleboard is to plan, track the progress of the tasks, the number of cards completed and to limit the work in-progress cards. 
 
+Execution Steps through command prompt
+
+Compile Instructions
+
+Requirements:
+
+Working internet connection (only for class diagram)
+The program expects following arguments:
+
+1.)Keyword:
+One word string.
+“class” for generating class diagram. 
+
+2.)Path:
+String, may contain spaces, must be enclosed in double quotes.
+Full path of the folder which contains all the .java source files(Test Cases Folder). The program picks only the .java files and ignores other files.
+Ex - "C:\Users\tneth\Desktop\umlparser\test-3"
+
+3.)Name of output file
+One word string
+File name of the output png file. The file will be created at the same folder as Path given in second argument.
+Do not include extension along with the file name, the program will generate a PNG file.
+Ex – ClassDiag
+
+Command Line:
+java -jar Parser.jar class "C:\Users\tneth\Desktop\umlparser\test-4" ClassDiag
+
+
+Sequence Diagram
+
+1.)Keyword
+One word string.
+"seq" for generating sequence diagram.
+
+
+p.s : Test Case Path hardcoded in the source code and not necessary to mention png name.
+Command Line:
+java -jar Sequence.jar seq
+
 
