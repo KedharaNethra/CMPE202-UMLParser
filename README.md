@@ -100,7 +100,7 @@ One word string.
 "seq" for generating sequence diagram.
 
 
-p.s : Test Case Path hardcoded in the source code and not necessary to mention png name.
+p.s : Test Case is already included in the source code and  also not necessary to mention png name.
 Command Line:
 java -jar Sequence.jar seq
 
